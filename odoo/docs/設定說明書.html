@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>Odoo 報價到期提醒｜設定說明書</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm 16mm 15mm; }
+  :root { --ink:#1f2933; --muted:#5f6b7a; --line:#d9dee5; --accent:#1d5fa8; --soft:#eef4fb; --warn:#9a5b00; --warnbg:#fff6e5; }
+  * { box-sizing: border-box; }
+  body { margin:0; color:var(--ink); background:#fff; font: 10.5pt/1.65 "Microsoft JhengHei","Noto Sans TC","PingFang TC",sans-serif; }
+  h1 { font-size:21pt; margin:0 0 4px; letter-spacing:.5px; }
+  h2 { font-size:13.5pt; margin:22px 0 8px; padding-bottom:4px; border-bottom:2px solid var(--accent); color:var(--accent); break-after:avoid; }
+  h3 { font-size:11pt; margin:14px 0 6px; break-after:avoid; }
+  p { margin:6px 0; }
+  .sub { color:var(--muted); margin:0 0 14px; }
+  .lead { background:var(--soft); border-radius:6px; padding:10px 14px; margin:12px 0 4px; }
+  table { width:100%; border-collapse:collapse; margin:8px 0 10px; font-size:9.8pt; break-inside:auto; }
+  tr { break-inside:avoid; }
+  th, td { border:1px solid var(--line); padding:6px 8px; vertical-align:top; text-align:left; }
+  th { background:#f4f6f9; font-weight:700; white-space:nowrap; }
+  code, .k { font-family:Consolas,"Cascadia Mono",monospace; font-size:9.4pt; }
+  .k { font-weight:700; color:#0b3d75; white-space:nowrap; }
+  pre { font-family:Consolas,"Cascadia Mono",monospace; font-size:9.2pt; background:#f6f8fa; border:1px solid var(--line); border-radius:5px; padding:8px 10px; margin:6px 0 10px; white-space:pre-wrap; break-inside:avoid; }
+  ol, ul { margin:6px 0 8px; padding-left:22px; }
+  li { margin:2px 0; }
+  .note { border-left:4px solid var(--warn); background:var(--warnbg); padding:8px 12px; margin:10px 0; border-radius:0 5px 5px 0; break-inside:avoid; }
+  .tip { border-left:4px solid var(--accent); background:var(--soft); padding:8px 12px; margin:10px 0; border-radius:0 5px 5px 0; break-inside:avoid; }
+  .step { display:inline-block; background:var(--accent); color:#fff; border-radius:4px; padding:0 8px; margin-right:6px; font-size:10pt; }
+  .req { color:#b42318; font-weight:700; white-space:nowrap; }
+  .opt { color:var(--muted); white-space:nowrap; }
+  .page-break { break-before:page; }
+  .checklist li { list-style:"☐  "; }
+  .quick { border:2px solid #2e7d4f; background:#eef8f1; border-radius:8px; padding:12px 16px; margin:14px 0 6px; break-inside:avoid; }
+  .quick h3 { color:#1f5e3a; }
+  .shot-step { margin:10px 0 14px; break-inside:avoid; }
+  .shot-step img { display:block; margin:6px 0 0 26px; border:1px solid var(--line); border-radius:6px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  .shot-text p { margin:4px 0; }
+  .shot-text ul { margin:4px 0 4px 26px; }
+  .num { display:inline-flex; align-items:center; justify-content:center; width:19px; height:19px; border-radius:50%; background:var(--accent); color:#fff; font-size:9pt; font-weight:700; margin-right:7px; }
+  .muted { color:var(--muted); margin-left:26px !important; font-size:9.6pt; }
+  footer { margin-top:20px; color:var(--muted); font-size:8.8pt; border-top:1px solid var(--line); padding-top:6px; }
+</style>
+</head>
+<body>
+
+<h1>Odoo 報價到期提醒｜設定說明書</h1>
+<p class="sub">說明要填哪些資料、去哪裡找、怎麼填。照著做完，大約 15 分鐘就能收到第一封提醒信。</p>
+
+<div class="lead">
+這套工具每天自動讀取 Odoo 的報價單，找出<b>效期過半</b>、<b>即將到期</b>、<b>已逾期</b>的案件，整理成一封繁體中文信寄給內部業務。
+它<b>只讀 Odoo、不會修改報價單、也不會寄信給客戶</b>。所有設定都寫在同一個檔案：<code>.env</code>。
+</div>
+
+<div class="quick">
+<h3 style="margin-top:0">公司同仁看這裡就好（資料夾已附 .env 的版本）</h3>
+<p>Odoo 網址和寄信伺服器都已經設定好了，你只要做四件事：</p>
+<ol>
+  <li><b>建立 Odoo API 金鑰</b>：照第二步「如何取得 API 金鑰」操作。</li>
+  <li><b>建立 Gmail 應用程式密碼</b>：照第四步「如何取得 Gmail 應用程式密碼」操作。</li>
+  <li><b>填 .env</b>：用記事本打開資料夾裡的 <code>.env</code>，填這三格後存檔：
+    <table style="margin:6px 0 4px">
+      <tr><th style="width:32%">欄位</th><th>填什麼</th></tr>
+      <tr><td><code>ODOO_API_KEY=</code></td><td>Odoo API 金鑰</td></tr>
+      <tr><td><code>SMTP_USER=</code>、<code>MAIL_FROM=</code></td><td>你的 Gmail 地址（兩格填一樣）</td></tr>
+      <tr><td><code>SMTP_PASSWORD=</code></td><td>Gmail 應用程式密碼（16 個字母）</td></tr>
+    </table>
+  </li>
+  <li><b>雙擊「1-預覽提醒信.bat」</b>：會跳出黑色視窗，列出今天要追蹤的報價，<b>不會寄信</b>。確認沒問題後，雙擊「<b>2-寄出提醒信.bat</b>」就會寄到你的信箱。</li>
+</ol>
+<p style="margin-bottom:0">電腦需要先裝好 Python（沒裝的話，雙擊時會提示下載網址）。設定每天自動寄信，請看第六步。其他章節是給要自訂設定的人看的，可以跳過。</p>
+</div>
+
+<h2>開始前準備</h2>
+<ul class="checklist">
+  <li>電腦已安裝 <b>Python 3.10 以上</b>（在終端機輸入 <code>python --version</code> 確認）</li>
+  <li>一個能登入公司 Odoo 的帳號，而且<b>看得到所有要追蹤的報價單</b>（提醒範圍等於這個帳號看得到的範圍）</li>
+  <li>一個可以用來寄信的信箱，以及它的 SMTP 設定（第四步會說明）</li>
+  <li>本工具的資料夾（裡面有 <code>.env.example</code>、<code>README.md</code>、<code>sales_reminder</code> 等檔案）</li>
+</ul>
+
+<h2><span class="step">第一步</span>建立設定檔 .env</h2>
+<ol>
+  <li>打開本工具的資料夾，找到 <code>.env.example</code>。</li>
+  <li>複製一份，把新檔案改名為 <code>.env</code>（前面有一個點，沒有其他副檔名）。</li>
+  <li>用記事本或任何文字編輯器打開 <code>.env</code>。接下來的每個設定都填在這個檔案裡。</li>
+</ol>
+<div class="note">
+<b>Windows 注意：</b>檔案總管預設會隱藏副檔名，改名時容易變成 <code>.env.txt</code>。請先在檔案總管上方「檢視 → 顯示 → 副檔名」打勾再改名。
+</div>
+<p>填寫格式是一行一個設定：<code>名稱=值</code>。等號兩邊不要加空白，值也不用加引號。以 <code>#</code> 開頭的是說明文字，可以不理它。</p>
+
+<h2><span class="step">第二步</span>填 Odoo 連線（三項必填）</h2>
+<table>
+  <tr><th style="width:22%">設定名稱</th><th style="width:30%">填什麼</th><th>怎麼找</th></tr>
+  <tr>
+    <td><span class="k">ODOO_URL</span> <span class="req">必填</span></td>
+    <td>Odoo 的網址，只要開頭那段<br>例：<code>https://yourcompany.odoo.com</code></td>
+    <td>登入 Odoo 後，看瀏覽器網址列，複製到 <code>.com</code> 為止。<b>後面的 <code>/odoo/...</code> 不要複製</b>，結尾也不要加斜線。</td>
+  </tr>
+  <tr>
+    <td><span class="k">ODOO_DB</span> <span class="req">必填</span></td>
+    <td>資料庫名稱<br>例：<code>yourcompany</code></td>
+    <td>Odoo 線上版（網址是 <code>xxx.odoo.com</code>）的資料庫名稱，<b>就是網址最前面那段 <code>xxx</code></b>。自架或 Odoo.sh 的系統請問系統管理員。</td>
+  </tr>
+  <tr>
+    <td><span class="k">ODOO_API_KEY</span> <span class="req">必填</span></td>
+    <td>你自己的 API 金鑰<br>（一長串英數字）</td>
+    <td>照下方「如何取得 API 金鑰」操作。</td>
+  </tr>
+</table>
+
+<h3>如何取得 API 金鑰</h3>
+
+<div class="shot-step">
+  <div class="shot-text">
+    <p><span class="num">1</span>登入 Odoo，點右上角<b>自己的頭像</b>，選「<b>My Preferences</b>」（我的偏好）。</p>
+  </div>
+  <img src="img/key-1-menu.png" alt="右上角頭像選單中的 My Preferences" style="width:42%">
+</div>
+
+<div class="shot-step">
+  <div class="shot-text">
+    <p><span class="num">2</span>切到「<b>Security</b>」分頁，點「<b>Add API Key</b>」。</p>
+  </div>
+  <img src="img/key-2-security.png" alt="Security 分頁的 Add API Key 按鈕" style="width:66%">
+</div>
+
+<div class="shot-step">
+  <div class="shot-text">
+    <p><span class="num">3</span>填欄位：</p>
+    <table>
+      <tr><th style="width:28%">欄位</th><th>填什麼</th></tr>
+      <tr><td><b>Name your key</b></td><td>用途名稱，例如「報價到期提醒」</td></tr>
+      <tr><td><b>Give a duration</b></td><td>有效期限。<b>預設 1 Day 要改長</b>（例如 3 個月），否則隔天金鑰就失效</td></tr>
+    </table>
+  </div>
+  <img src="img/key-3-new.png" alt="New API Key 視窗：名稱與有效期限" style="width:54%">
+</div>
+
+<div class="shot-step">
+  <div class="shot-text">
+    <p><span class="num">4</span>按「<b>Generate key</b>」，複製畫面上的金鑰（只顯示這一次），貼到 <code>.env</code> 的 <code>ODOO_API_KEY=</code> 後面。</p>
+  </div>
+</div>
+<div class="note">
+金鑰等於你的 Odoo 帳號權限，請當成密碼保管：不要寄給別人、不要貼到聊天群組、不要上傳到 GitHub。萬一外流，回到同一個頁面把那把金鑰刪掉，再產生新的即可。
+</div>
+
+<p>填好後，這段看起來會像這樣（以下為示範值）：</p>
+<pre>ODOO_URL=https://yourcompany.odoo.com
+ODOO_DB=yourcompany
+ODOO_API_KEY=0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b</pre>
+
+<h2><span class="step">第三步</span>先預覽，確認連得上 Odoo</h2>
+<p>在本工具的資料夾空白處按右鍵 →「在終端機中開啟」，輸入：</p>
+<pre>python -m sales_reminder --dry-run</pre>
+<p>這一步<b>不會寄信</b>，只會在畫面上印出「如果今天寄信，內容會是什麼」。看到最後一行像下面這樣，就代表 Odoo 已經接通：</p>
+<pre>結果：dry_run｜掃描 14 筆｜提醒 8 筆</pre>
+<p>如果顯示 <code>結果：nothing</code>，代表連線正常，只是今天剛好沒有需要提醒的報價。出現錯誤訊息的話，請看文末的「常見問題」。</p>
+
+<h2><span class="step">第四步</span>填寄信設定</h2>
+<table>
+  <tr><th style="width:24%">設定名稱</th><th style="width:30%">填什麼</th><th>說明</th></tr>
+  <tr><td><span class="k">EMAIL_ENABLED</span></td><td><code>false</code> 或 <code>true</code></td><td>寄信總開關。<b>預設是 false</b>，這時只會預覽、不會寄。全部填好、確認無誤再改成 <code>true</code>。</td></tr>
+  <tr><td><span class="k">SMTP_HOST</span> <span class="req">寄信必填</span></td><td>寄信伺服器</td><td>見下方「常見信箱設定」。</td></tr>
+  <tr><td><span class="k">SMTP_PORT</span></td><td>通常是 <code>587</code></td><td>用 ssl 方式時通常是 <code>465</code>。</td></tr>
+  <tr><td><span class="k">SMTP_SECURITY</span></td><td><code>starttls</code>／<code>ssl</code>／<code>none</code></td><td>加密方式，絕大多數填 <code>starttls</code>。</td></tr>
+  <tr><td><span class="k">SMTP_USER</span></td><td>寄信信箱的完整帳號</td><td>例：<code>notice@yourcompany.com</code></td></tr>
+  <tr><td><span class="k">SMTP_PASSWORD</span></td><td>寄信信箱的密碼</td><td>Google／Microsoft 信箱請用<b>應用程式密碼</b>，不是平常登入的密碼（見下方）。</td></tr>
+  <tr><td><span class="k">MAIL_FROM</span> <span class="req">寄信必填</span></td><td>寄件人地址</td><td>一般跟 <code>SMTP_USER</code> 填一樣即可。</td></tr>
+  <tr><td><span class="k">MAIL_TO</span> <span class="req">寄信必填</span></td><td>收件人，多人用逗號分隔</td><td>例：<code>sales1@yourcompany.com,sales2@yourcompany.com</code><br>第一次測試建議<b>先只填你自己</b>。</td></tr>
+  <tr><td><span class="k">INTERNAL_DOMAINS</span> <span class="opt">建議填</span></td><td>公司信箱網域</td><td>例：<code>yourcompany.com</code>。填了之後，收件人只要不是這個網域，程式就會拒絕寄出，避免誤寄給客戶。</td></tr>
+</table>
+
+<h3>常見信箱設定</h3>
+<table>
+  <tr><th>信箱服務</th><th>SMTP_HOST</th><th>SMTP_PORT</th><th>SMTP_SECURITY</th><th>密碼</th></tr>
+  <tr><td>Gmail／Google Workspace</td><td><code>smtp.gmail.com</code></td><td>587</td><td>starttls</td><td>應用程式密碼（16 碼）</td></tr>
+  <tr><td>Microsoft 365／Outlook</td><td><code>smtp.office365.com</code></td><td>587</td><td>starttls</td><td>依公司 IT 設定</td></tr>
+  <tr><td>公司自有郵件主機</td><td colspan="4">請向 IT 或主機商索取 SMTP 主機、連接埠與加密方式</td></tr>
+</table>
+<h3>如何取得 Gmail 應用程式密碼</h3>
+
+<div class="shot-step">
+  <div class="shot-text">
+    <p><span class="num">1</span>用 Chrome 登入你的 Gmail，開啟 <code>myaccount.google.com/apppasswords</code>（Google 可能會要你再輸入一次密碼）。</p>
+    <p><span class="num">2</span>在「應用程式名稱」填用途名稱，例如 <b>OdooMailNotice</b>，按「<b>建立</b>」。</p>
+  </div>
+  <img src="img/gmail-1-name.png" alt="應用程式密碼頁：輸入名稱後按建立" style="width:58%">
+</div>
+
+<div class="shot-step">
+  <div class="shot-text">
+    <p><span class="num">3</span>畫面會顯示 16 個字母（只顯示這一次）。複製後貼到 <code>.env</code> 的 <code>SMTP_PASSWORD=</code> 後面（有沒有空白都可以），再按「完成」。</p>
+  </div>
+  <img src="img/gmail-2-created.png" alt="系統產生的應用程式密碼（已遮蔽）" style="width:62%">
+</div>
+
+<table>
+  <tr><th style="width:32%">遇到狀況</th><th>處理</th></tr>
+  <tr><td>頁面顯示「這項設定不適用」</td><td>要先開啟<b>兩步驟驗證</b>：Google 帳戶 →「安全性」→「兩步驟驗證」，開好再回來建立。</td></tr>
+  <tr><td>寄件人顯示你的 Gmail</td><td>正常。Gmail 只能用自己的地址寄出，所以 <code>MAIL_FROM</code> 要跟 <code>SMTP_USER</code> 一樣。</td></tr>
+  <tr><td>第一封信進了垃圾郵件</td><td>標記「不是垃圾郵件」，之後就會正常進收件匣。</td></tr>
+</table>
+
+<h2><span class="step">第五步</span>寄一封測試信</h2>
+<ol>
+  <li>確認 <code>MAIL_TO</code> 只填了你自己的信箱。</li>
+  <li>把 <code>EMAIL_ENABLED</code> 改成 <code>true</code>，存檔。</li>
+  <li>在終端機輸入 <code>python -m sales_reminder</code>（這次不加 <code>--dry-run</code>）。</li>
+  <li>最後一行出現 <code>結果：ok</code>，就去收信，順便點一個報價單號，確認會開到 Odoo 的那張報價單（需要已登入 Odoo）。</li>
+</ol>
+<div class="note">
+<b>測試完、要正式寄給業務之前：</b>把 <code>MAIL_TO</code> 改成正式收件人，再<b>刪除資料夾裡的 <code>data/reminder.db</code></b>。
+系統會記錄「哪些提醒已經寄過」來避免重複寄送；不刪掉的話，你測試時收到的那幾筆，正式收件人就不會再收到。
+</div>
+
+<h2><span class="step">第六步</span>設定每天早上 9 點自動執行</h2>
+<p>在本工具的資料夾開啟 Claude，跟它說：</p>
+<pre>幫我設定每天自動提醒</pre>
+<p>Claude 會先問你手邊有什麼工具（Claude 雲端排程、Claude 桌面版、Windows 工作排程器或 Linux 主機），再一步一步帶你設定好。</p>
+<p>如果你選 <b>Claude 雲端排程</b>，<code>.env</code> 要多改一項：<code>STATE_MODE=stateless</code>。原因是雲端每次執行都是全新環境，無法保留「已寄過」的紀錄。</p>
+
+<h2>選填：調整提醒規則</h2>
+<p>不填就使用預設值。改完存檔，下次執行就會生效。</p>
+<table>
+  <tr><th style="width:24%">設定名稱</th><th style="width:12%">預設</th><th>作用</th><th style="width:26%">例子</th></tr>
+  <tr><td><span class="k">DUE_SOON_DAYS</span></td><td>7</td><td>到期前幾天發「即將到期」提醒，可填 7 到 14</td><td><code>DUE_SOON_DAYS=10</code><br>到期前 10 天提醒</td></tr>
+  <tr><td><span class="k">TRACK_STATES</span></td><td>sent</td><td>要追蹤哪些狀態的報價。<code>sent</code>＝已發送給客戶；<code>draft</code>＝草稿</td><td><code>TRACK_STATES=sent,draft</code><br>連草稿一起追蹤</td></tr>
+  <tr><td><span class="k">OVERDUE_MAX_DAYS</span></td><td>30</td><td>逾期超過幾天就不再列入，避免陳年舊單一直出現</td><td><code>OVERDUE_MAX_DAYS=90</code></td></tr>
+  <tr><td><span class="k">MIN_GAP_DAYS</span></td><td>3</td><td>「效期過半」和「即將到期」日期相距少於這個天數時，只寄後面那次</td><td>一般不用改</td></tr>
+  <tr><td><span class="k">MIN_AGE_DAYS</span></td><td>1</td><td>報價建立未滿幾天不提醒</td><td>一般不用改</td></tr>
+  <tr><td><span class="k">STATE_MODE</span></td><td>db</td><td>用 Claude 雲端排程時改成 <code>stateless</code>，其他情況維持 <code>db</code></td><td>見第六步</td></tr>
+</table>
+<div class="tip">
+想做 <code>.env</code> 改不到的調整，例如「每位業務只收到自己的報價」「信裡加產品明細」，直接用口語跟 Claude 說就好，它會依照 <code>SKILL.md</code> 的規範修改並測試。
+</div>
+
+<h2>常見問題</h2>
+<table>
+  <tr><th style="width:38%">畫面出現</th><th>原因與處理</th></tr>
+  <tr><td><code>設定錯誤：缺少必要設定：ODOO_URL…</code></td><td>找不到 <code>.env</code>，或那幾項沒填。確認檔名是 <code>.env</code>（不是 <code>.env.txt</code>），而且和 <code>.env.example</code> 放在同一個資料夾。</td></tr>
+  <tr><td><code>Odoo 拒絕存取（HTTP 401）</code></td><td>API 金鑰錯誤或已過期（最常見：建立時沒改掉預設的 1 Day）。重新產生一把、期限選長一點，完整貼上，前後不要多空白。</td></tr>
+  <tr><td><code>Odoo 拒絕存取（HTTP 403）</code></td><td>帳號沒有銷售模組的權限，請管理員開啟。</td></tr>
+  <tr><td><code>Odoo 連線重試 3 次仍失敗</code></td><td>網址填錯或網路不通。檢查 <code>ODOO_URL</code> 是否只有 <code>https://xxx.odoo.com</code>，再用瀏覽器確認打得開。</td></tr>
+  <tr><td><code>Odoo 回應錯誤 HTTP 404</code></td><td>通常是 <code>ODOO_DB</code> 填錯，請對照網址最前面那段。</td></tr>
+  <tr><td><code>EMAIL_ENABLED=true 但缺少：…</code></td><td>開啟寄信後，<code>SMTP_HOST</code>、<code>MAIL_FROM</code>、<code>MAIL_TO</code> 都必須填。</td></tr>
+  <tr><td><code>SMTP 帳密錯誤</code></td><td>Google／Microsoft 信箱要用應用程式密碼，不是登入密碼。</td></tr>
+  <tr><td><code>收件人不在內部網域</code></td><td><code>MAIL_TO</code> 裡有外部信箱，或 <code>INTERNAL_DOMAINS</code> 拼錯。這是防止誤寄客戶的保護機制。</td></tr>
+  <tr><td><code>（EMAIL_ENABLED 未開啟，所以只預覽沒寄信）</code></td><td>不是錯誤。要真的寄信，請把 <code>EMAIL_ENABLED</code> 改成 <code>true</code>。</td></tr>
+  <tr><td><code>結果：nothing</code></td><td>不是錯誤，代表今天沒有需要提醒的報價。</td></tr>
+  <tr><td><code>已有另一個提醒程序在執行</code></td><td>同時跑了兩次，等上一次結束即可。如果確定沒有程序在跑，刪除 <code>data/run.lock</code>。</td></tr>
+</table>
+<p>查看最近 10 次執行結果：<code>python -m sales_reminder --status</code>。更詳細的紀錄在 <code>data/reminder.log</code>。</p>
+
+<footer>Odoo 報價到期提醒｜設定說明書　·　適用 Odoo 19（Odoo Online）　·　2026-10-21</footer>
+</body>
+</html>
