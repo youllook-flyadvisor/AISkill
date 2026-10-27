@@ -79,7 +79,7 @@ def load_settings() -> Settings:
     load_dotenv()
     missing = [n for n in ("ODOO_URL", "ODOO_DB", "ODOO_API_KEY") if not _get(n)]
     if missing:
-        raise ConfigError("缺少必要設定：" + ", ".join(missing) + "（請在 .env 填寫，步驟見 docs\\設定說明書.pdf）")
+        raise ConfigError("缺少必要設定：" + ", ".join(missing) + "（請在 .env 填寫，步驟見 docs/設定說明書.pdf）")
     rules = Rules(
         track_states=_list("TRACK_STATES", "sent"),
         due_soon_days=_int("DUE_SOON_DAYS", 7),
