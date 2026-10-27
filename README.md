@@ -33,7 +33,7 @@ FlyAdvisor 共用的 Claude／AI skill。每個資料夾是一個獨立的 skill
 請幫我安裝 Claude skill「find-scout」：
 1. 從 https://github.com/youllook-flyadvisor/AISkill 取得 find-scout/ 資料夾
    （有 git 就 clone 到暫存資料夾；沒有 git 就下載 https://github.com/youllook-flyadvisor/AISkill/archive/refs/heads/main.zip 解壓）。
-2. 把 find-scout/ 整個複製到 ~/.claude/skills/find-scout（Windows 是 %USERPROFILE%\.claude\skillsind-scout），已存在就先問我要不要覆蓋。
+2. 把 find-scout/ 整個複製到 ~/.claude/skills/find-scout（Windows 是 %USERPROFILE%\.claude\skills\find-scout），已存在就先問我要不要覆蓋。
 3. 確認 SKILL.md 和 find-scout.ps1 都在，不要修改電腦的 PowerShell 執行原則。
 4. 完成後告訴我：之後只要說「找 Scout」就會觸發。
 ```
