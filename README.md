@@ -8,31 +8,44 @@ FlyAdvisor 共用的 Claude／AI skill。每個資料夾是一個獨立的 skill
 | [`find-scout/`](find-scout/) | 找出 Dronetag Scout 管理介面目前的網址（Scout 用 DHCP，位址會變）；直連時可經使用者同意暫時加連線位址 |
 | [`mocker/`](mocker/) | 操作 Dronetag Mocker：建立虛擬飛行、列出虛擬設定資料、結束模擬。要先向 Dronetag 申請虛擬裝置 |
 
-## 指令安裝（mocker）
+## 指令安裝（mocker、find-scout）
 
 **最簡單：把這句貼給 Claude（桌面版 Code 分頁或終端機都行）**
+
+mocker：
 
 ```text
 請幫我在終端機執行：claude plugin marketplace add youllook-flyadvisor/AISkill，再執行 claude plugin install mocker@flyadvisor-aiskill，裝好後告訴我要重開對話才會生效。
 ```
 
-裝好後開新對話，說「開一架虛擬飛行」就會觸發。
+find-scout：
 
-**自己打指令：** 在 Claude Code 裡依序輸入下面兩行：
+```text
+請幫我在終端機執行：claude plugin marketplace add youllook-flyadvisor/AISkill，再執行 claude plugin install find-scout@flyadvisor-aiskill，裝好後告訴我要重開對話才會生效。
+```
+
+兩個都要時，貼一段就好，把兩個 install 都寫進去。第二次以後 marketplace 已經加過，再加一次會顯示已存在，不影響安裝。
+裝好後開新對話：說「開一架虛擬飛行」會觸發 mocker，說「找 Scout」會觸發 find-scout。
+
+**自己打指令：** 在 Claude Code 裡依序輸入：
 
 ```text
 /plugin marketplace add youllook-flyadvisor/AISkill
 /plugin install mocker@flyadvisor-aiskill
+/plugin install find-scout@flyadvisor-aiskill
 ```
 
-如果是 Claude Code 2.1.275 以後的版本，也可以只打一行：
+如果是 Claude Code 2.1.275 以後的版本，也可以一行裝一個：
 
 ```text
 /plugin install mocker --marketplace youllook-flyadvisor/AISkill
+/plugin install find-scout --marketplace youllook-flyadvisor/AISkill
 ```
 
 之後有更新，執行 `/plugin marketplace update flyadvisor-aiskill` 就會拿到新版。
-mocker 需要 Claude in Chrome 擴充功能，而且瀏覽器要登入有 Mocker 權限的 Dronetag 帳號。
+
+- mocker 需要 Claude in Chrome 擴充功能，而且瀏覽器要登入有 Mocker 權限的 Dronetag 帳號。
+- odoo 要填 `.env` 和裝 Python，不適合指令安裝，請照下方手動安裝。
 
 ## 手動安裝
 

@@ -13,6 +13,14 @@
       "version": "2026.11.09",
       "strict": false,
       "skills": ["./mocker"]
+    },
+    {
+      "name": "find-scout",
+      "source": "./",
+      "description": "找出 Dronetag Scout 設定頁目前的位址；直連沒有 DHCP 時，經同意可暫時加連線位址",
+      "version": "2026.11.09",
+      "strict": false,
+      "skills": ["./find-scout"]
     }
   ]
 }
