@@ -6,8 +6,27 @@ FlyAdvisor 共用的 Claude／AI skill。每個資料夾是一個獨立的 skill
 |---|---|
 | [`odoo/`](odoo/) | Odoo 報價到期提醒：每天撈快到期／已逾期的報價單，寄提醒信給業務。設定步驟見 `odoo/docs/設定說明書.pdf` |
 | [`find-scout/`](find-scout/) | 找出 Dronetag Scout 管理介面目前的網址（Scout 用 DHCP，位址會變）；直連時可經使用者同意暫時加連線位址 |
+| [`mocker/`](mocker/) | 操作 Dronetag Mocker：建立虛擬飛行、列出虛擬設定資料、結束模擬。要先向 Dronetag 申請虛擬裝置 |
 
-## 安裝
+## 指令安裝（mocker）
+
+在 Claude Code 裡依序輸入下面兩行：
+
+```text
+/plugin marketplace add youllook-flyadvisor/AISkill
+/plugin install mocker@flyadvisor-aiskill
+```
+
+如果是 Claude Code 2.1.275 以後的版本，也可以只打一行：
+
+```text
+/plugin install mocker --marketplace youllook-flyadvisor/AISkill
+```
+
+之後有更新，執行 `/plugin marketplace update flyadvisor-aiskill` 就會拿到新版。
+mocker 需要 Claude in Chrome 擴充功能，而且瀏覽器要登入有 Mocker 權限的 Dronetag 帳號。
+
+## 手動安裝
 
 把要用的資料夾複製到 Claude 的 skill 目錄（例如 `~/.claude/skills/`），或直接在這個 repo 裡開 Claude。
 
