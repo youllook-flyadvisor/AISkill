@@ -10,7 +10,15 @@ FlyAdvisor 共用的 Claude／AI skill。每個資料夾是一個獨立的 skill
 
 ## 指令安裝（mocker）
 
-在 Claude Code 裡依序輸入下面兩行：
+**最簡單：把這句貼給 Claude（桌面版 Code 分頁或終端機都行）**
+
+```text
+請幫我在終端機執行：claude plugin marketplace add youllook-flyadvisor/AISkill，再執行 claude plugin install mocker@flyadvisor-aiskill，裝好後告訴我要重開對話才會生效。
+```
+
+裝好後開新對話，說「開一架虛擬飛行」就會觸發。
+
+**自己打指令：** 在 Claude Code 裡依序輸入下面兩行：
 
 ```text
 /plugin marketplace add youllook-flyadvisor/AISkill
